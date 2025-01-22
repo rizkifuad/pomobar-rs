@@ -3,6 +3,14 @@ name = "pomobar-rs"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "pomobar"
+path = "src/bin/server.rs"
+
+[[bin]]
+name = "pomobar-cli"
+path = "src/bin/client.rs"
+
 [dependencies]
 anyhow = "1.0.95"
 chrono = { version = "0.4.39", features = ["serde"] }
