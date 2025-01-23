@@ -10,12 +10,14 @@ use tokio::{
     net::UnixStream,
 };
 
-use pomobar_rs::{Pomobar, State};
+use pomobar_rs::Pomobar;
 
 #[derive(Debug, Clone, Serialize)]
 struct Waybar {
     text: String,
+    alt: String,
     class: String,
+    tooltip: String,
 }
 
 impl From<Pomobar> for Waybar {
@@ -28,16 +30,16 @@ impl From<Pomobar> for Waybar {
             .num_seconds();
 
         let time = format!("{:02}:{:02}", minutes, seconds);
-
-        let text = match value.state {
-            State::Idle => format!(" {}", &time),
-            State::Paused => format!("󰏤 {}", &time),
-            State::Work | State::ShortBreak | State::LongBreak => format!(" {}", &time),
-        };
-
+        let count = value.pomodoro_count;
         let class = value.state.to_string();
+        let tooltip = format!("Completed {} pomodoros", count);
 
-        Self { text, class }
+        Self {
+            text: time,
+            alt: class.clone(),
+            class,
+            tooltip,
+        }
     }
 }
 
