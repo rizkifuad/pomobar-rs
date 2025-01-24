@@ -55,9 +55,9 @@ async fn main() -> Result<()> {
     let path = "/tmp/pomobar.sock";
 
     let cmd = command!()
-        .subcommand(command!("status"))
-        .subcommand(command!("toggle"))
-        .subcommand(command!("reset"));
+        .subcommand(command!("status").about("Get currently pomodoro status."))
+        .subcommand(command!("toggle").about("Start/Pause pomodoro."))
+        .subcommand(command!("reset").about("Reset pomodoro"));
 
     let matches = cmd.get_matches();
 

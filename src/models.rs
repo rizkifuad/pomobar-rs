@@ -1,4 +1,5 @@
 use chrono::Duration;
+use notify_rust::{Notification, Urgency};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -10,6 +11,36 @@ pub enum State {
     ShortBreak,
     LongBreak,
     Paused,
+}
+
+impl State {
+    pub fn notify_when_start() -> Notification {
+        Notification::new()
+            .summary("It's time to focus!")
+            .urgency(Urgency::Low)
+            .clone()
+    }
+
+    pub fn notify_when_pause() -> Notification {
+        Notification::new()
+            .summary("Paused the pomodoro!")
+            .urgency(Urgency::Low)
+            .clone()
+    }
+
+    pub fn notify_when_take_break() -> Notification {
+        Notification::new()
+            .summary("It's time to take break!")
+            .urgency(Urgency::Low)
+            .clone()
+    }
+
+    pub fn notify_when_reset() -> Notification {
+        Notification::new()
+            .summary("Reset the pomodoro!")
+            .urgency(Urgency::Low)
+            .clone()
+    }
 }
 
 impl ToString for State {
@@ -107,15 +138,20 @@ impl Pomobar {
 
     pub fn toggle(&mut self) -> Self {
         if let State::Idle = self.state {
+            State::notify_when_start().show().unwrap();
             return self.work();
         }
 
         if let State::Paused = self.state {
             self.state = self.last_state.clone();
             self.last_state = State::Paused;
+
+            State::notify_when_start().show().unwrap();
         } else {
             self.last_state = self.state.clone();
             self.state = State::Paused;
+
+            State::notify_when_pause().show().unwrap();
         }
         self.clone()
     }
@@ -126,16 +162,21 @@ impl Pomobar {
                 self.last_state = self.state.clone();
                 self.state = State::ShortBreak;
                 self.remaining_time = Duration::minutes(5);
+
+                State::notify_when_take_break().show().unwrap();
             } else if self.pomodoro_count == 4 {
                 self.last_state = self.state.clone();
                 self.state = State::LongBreak;
                 self.remaining_time = Duration::minutes(15);
+
+                State::notify_when_take_break().show().unwrap();
             }
         }
         self.clone()
     }
 
     pub fn reset(&mut self) -> Self {
+        State::notify_when_reset().show().unwrap();
         Self::default()
     }
 }
