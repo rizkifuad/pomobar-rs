@@ -1,9 +1,7 @@
 # pomobar-rs
 
 `pomobar-rs` is a Waybar plugin that implements a Pomodoro timer.
-The plugin utilizes socket-based communication between Waybar and pomobar.
-
----
+The plugin utilizes socket-based communication between [Waybar](https://github.com/Alexays/Waybar) and pomobar.
 
 ## Installation
 
@@ -29,8 +27,6 @@ Install the binaries by copying them to their respective locations:
 cp target/release/pomobar ~/.local/bin/pomobar
 cp target/release/pomobar-cli ~/.config/waybar/pomobar-cli
 ```
-
----
 
 ## Usage
 
@@ -61,7 +57,5 @@ Add the following configuration to your Waybar config:
   },
 }
 ```
-
----
 
 This project is inspired by [mt190502/pomobar](https://github.com/mt190502/pomobar)
