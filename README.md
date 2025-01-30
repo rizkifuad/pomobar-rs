@@ -58,4 +58,16 @@ Add the following configuration to your Waybar config:
 }
 ```
 
+## Screenshots
+
+Notification with [mako]()
+
+![pomobar-notification](assets/notification.png)
+
+Tootip
+
+![pomobar-tooltip](assets/tooltip.png)
+
+To see the notification icon, copy the icon file to `/usr/share/icons/hicolor/64x64/apps/pomobar.png`.
+
 This project is inspired by [mt190502/pomobar](https://github.com/mt190502/pomobar)
