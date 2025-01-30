@@ -18,6 +18,8 @@ impl State {
         Notification::new()
             .summary("It's time to focus!")
             .urgency(Urgency::Low)
+            .appname("pomobar")
+            .icon("pomobar")
             .clone()
     }
 
@@ -25,6 +27,8 @@ impl State {
         Notification::new()
             .summary("Paused the pomodoro!")
             .urgency(Urgency::Low)
+            .appname("pomobar")
+            .icon("pomobar")
             .clone()
     }
 
@@ -32,6 +36,8 @@ impl State {
         Notification::new()
             .summary("It's time to take break!")
             .urgency(Urgency::Low)
+            .appname("pomobar")
+            .icon("pomobar")
             .clone()
     }
 
@@ -39,6 +45,8 @@ impl State {
         Notification::new()
             .summary("Reset the pomodoro!")
             .urgency(Urgency::Low)
+            .appname("pomobar")
+            .icon("pomobar")
             .clone()
     }
 }
@@ -102,14 +110,18 @@ impl Pomobar {
                     self.count_down()
                 } else {
                     self.pomodoro_count += 1;
-                    self.take_break()
+                    let result = self.take_break();
+                    State::notify_when_take_break().show().unwrap();
+                    result
                 }
             }
             State::LongBreak | State::ShortBreak => {
                 if !self.timeout() {
                     self.count_down()
                 } else {
-                    self.work()
+                    let result = self.work();
+                    State::notify_when_start().show().unwrap();
+                    result
                 }
             }
         }
@@ -162,22 +174,19 @@ impl Pomobar {
                 self.last_state = self.state.clone();
                 self.state = State::ShortBreak;
                 self.remaining_time = Duration::minutes(5);
-
-                State::notify_when_take_break().show().unwrap();
             } else if self.pomodoro_count == 4 {
                 self.last_state = self.state.clone();
                 self.state = State::LongBreak;
                 self.remaining_time = Duration::minutes(15);
-
-                State::notify_when_take_break().show().unwrap();
             }
         }
         self.clone()
     }
 
     pub fn reset(&mut self) -> Self {
+        let resutl = Self::default();
         State::notify_when_reset().show().unwrap();
-        Self::default()
+        resutl
     }
 }
 
