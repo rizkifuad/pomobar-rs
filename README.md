@@ -60,7 +60,7 @@ Add the following configuration to your Waybar config:
 
 ## Screenshots
 
-Notification with [mako]()
+Notification with [mako](https://github.com/emersion/mako)
 
 ![pomobar-notification](assets/notification.png)
 
