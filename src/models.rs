@@ -158,7 +158,11 @@ impl Pomobar {
             self.state = self.last_state.clone();
             self.last_state = State::Paused;
 
-            State::notify_when_start().show().unwrap();
+            if let State::LongBreak | State::ShortBreak = self.last_state {
+                State::notify_when_take_break().show().unwrap();
+            } else {
+                State::notify_when_start().show().unwrap();
+            };
         } else {
             self.last_state = self.state.clone();
             self.state = State::Paused;
