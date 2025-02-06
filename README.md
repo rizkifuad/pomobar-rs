@@ -50,9 +50,9 @@ Add the following configuration to your Waybar config:
       "long_break": "",
     },
     "interval": 1,
-    "exec": "${HOME}/.config/waybar/scripts/pomobar-cli status",
-    "on-click": "${HOME}/.config/waybar/scripts/pomobar-cli toggle",
-    "on-click-middle": "${HOME}/.config/waybar/scripts/pomobar-cli reset",
+    "exec": "${HOME}/.config/waybar/pomobar-cli status",
+    "on-click": "${HOME}/.config/waybar/pomobar-cli toggle",
+    "on-click-middle": "${HOME}/.config/waybar/pomobar-cli reset",
     "return-type": "json",
   },
 }
