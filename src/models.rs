@@ -1,6 +1,8 @@
 use chrono::Duration;
 use notify_rust::{Notification, Urgency};
+use rodio::{Decoder, OutputStream, Sink};
 use serde::{Deserialize, Serialize};
+use std::{io::Cursor, thread};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -13,10 +15,31 @@ pub enum State {
     Paused,
 }
 
+fn play_sound_bg(bytes: &'static [u8]) {
+    thread::spawn(move || {
+        if let Err(err) = play_sound(bytes) {
+            eprintln!("Failed to play sound: {err}");
+        }
+    });
+}
+
+fn play_sound(bytes: &'static [u8]) -> Result<(), Box<dyn std::error::Error>> {
+    let (_stream, stream_handle) = OutputStream::try_default()?;
+    let sink = Sink::try_new(&stream_handle)?;
+
+    let cursor = Cursor::new(bytes);
+    let source = Decoder::new(cursor)?;
+
+    sink.append(source);
+    sink.sleep_until_end();
+    Ok(())
+}
+
 impl State {
     pub fn notify_when_start() -> Notification {
+        let _ = play_sound_bg(include_bytes!("../assets/start.wav"));
         Notification::new()
-            .summary("It's time to focus!")
+            .summary("🎯 It's time to focus!")
             .urgency(Urgency::Low)
             .appname("pomobar")
             .icon("pomobar")
@@ -25,7 +48,7 @@ impl State {
 
     pub fn notify_when_pause() -> Notification {
         Notification::new()
-            .summary("Paused the pomodoro!")
+            .summary("🔴 Paused the pomodoro!")
             .urgency(Urgency::Low)
             .appname("pomobar")
             .icon("pomobar")
@@ -33,9 +56,20 @@ impl State {
     }
 
     pub fn notify_when_take_break() -> Notification {
+        let _ = play_sound_bg(include_bytes!("../assets/break.wav"));
         Notification::new()
-            .summary("It's time to take break!")
-            .urgency(Urgency::Low)
+            .summary("☕ It's time to take break!")
+            .urgency(Urgency::Critical)
+            .appname("pomobar")
+            .icon("pomobar")
+            .clone()
+    }
+
+    pub fn notify_when_take_long_break() -> Notification {
+        let _ = play_sound_bg(include_bytes!("../assets/break.wav"));
+        Notification::new()
+            .summary("🌿 It's time to take stretch!")
+            .urgency(Urgency::Critical)
             .appname("pomobar")
             .icon("pomobar")
             .clone()
@@ -43,7 +77,7 @@ impl State {
 
     pub fn notify_when_reset() -> Notification {
         Notification::new()
-            .summary("Reset the pomodoro!")
+            .summary("🔴 Reset the pomodoro!")
             .urgency(Urgency::Low)
             .appname("pomobar")
             .icon("pomobar")
@@ -111,7 +145,11 @@ impl Pomobar {
                 } else {
                     self.pomodoro_count += 1;
                     let result = self.take_break();
-                    State::notify_when_take_break().show().unwrap();
+                    if self.pomodoro_count == 4 {
+                        State::notify_when_take_break().show().unwrap();
+                    } else {
+                        State::notify_when_take_long_break().show().unwrap();
+                    }
                     result
                 }
             }
